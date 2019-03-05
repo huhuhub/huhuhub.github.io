@@ -21,89 +21,53 @@
 </html>
 <body class="loading">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="loader"></div>
-    <div class="nav">
-    <ul id="menu-menu" class="menu">
-        
-        <li class="pview menu-item menu-item-type-post_type menu-item-object-page">
-            <a href="/whoami/" title="Whoami" target="_blank" rel="noopener">Whoami</a>
-        </li>
-        
-        <li class="  menu-item menu-item-type-post_type menu-item-object-page">
-            <a href="https://github.com/huhublog" title="Github" target="_blank" rel="noopener">Github</a>
-        </li>
-        
-    </ul>
+    <div id="single" class="page">
+    <div id="top">
+        <a class="icon-left image-icon" href="javascript:history.back()"></a>
+    </div>
+    <div class="section">
+        <div class="article">
+            <div class="main">
+                <div class="content">
+                    <h3 id="what-is-filesort"><a href="#what-is-filesort" class="headerlink" title="what is filesort"></a>what is filesort</h3><p>文件排序？nonono，filesort是一种算法，filesort()对适合其内存的数据块进行快速排序，然后使用mergesort方法合并数据块。filesort()的可用内存量由@@sort_buffer_size变量控制。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>mysql&gt; show variables like ‘%sort_buffer_size%’;<br>+————————————-+—————-+<br></th>
+<th>Variable_name</th>
+<th>Value</th>
+<th><br>+————————————-+—————-+<br></th>
+<th>innodb_sort_buffer_size</th>
+<th>1048576</th>
+<th><br></th>
+<th>myisam_sort_buffer_size</th>
+<th>106954752</th>
+<th><br></th>
+<th>sort_buffer_size</th>
+<th>262144</th>
+<th><br>+————————————-+—————-+<br></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
 </div>
+<p>sort_buffer_size的大小只有256k，当需要sort的数据超过256k，则会分为很多块，这时候filesort就会使用临时文件来存储块。</p>
+<p>另外filesort()的源数据始终来自一个表。如果需要对来自多个表的数据进行排序，MySQL将首先将数据收集到临时表中，然后为该临时表调用filesort()。</p>
+<h3 id="when-use-filesort"><a href="#when-use-filesort" class="headerlink" title="when use filesort"></a>when use filesort</h3><blockquote>
+<p>既然需要sort，想必我们一定用到了一个关键字，order by，那我们先想想mysql是怎么输出有序序列的？</p>
+</blockquote>
 
-<div id="container">
-    
-<div id="screen">
-    <div id="mark">
-        <div class="layer" data-depth="0.4">
-            <img src="/img/welcome-cover.jpg" id="cover" crossorigin="anonymous" width="1920" height="1080">
+                </div>
+            </div>
         </div>
     </div>
-    <div id="vibrant">
-        <svg viewbox="0 0 2880 1620" height="100%" preserveaspectratio="xMaxYMax slice">
-            <polygon opacity="0.7" points="2000,1620 0,1620 0,0 600,0 "/>
-        </svg>
-        <div></div>
-    </div>
-    <div id="header">
-        <div>
-            <a class="image-logo" href="/"></a>
-            <div class="icon-menu switchmenu"></div>
-        </div>
-    </div>
-    
-    <div id="post0">
-        <p>十二月 31, 2018</p>
-        <h2><a href="/2018/12/31/年终总结/" title="2018，那些词" class="posttitle">2018，那些词</a></h2>
-        <p class="summary">
-关键字：生活是具体的，有朋自远方来，自律，知识分享，抖音，酒吧，司机，在现实生活中寻找代码对应的，产品
-
-生活是...</p>
-    </div>
-    
 </div>
-
-    <div id="primary">
-        
-<div class="post">
-    <a href="/2018/12/27/DML审计/" title="DML审计">
-        <img src="/img/cover.jpg" class="cover" width="680" height="440">
-    </a>
-    <div class="else">
-        <p>十二月 27, 2018</p>
-        <h3><a href="/2018/12/27/DML审计/" title="DML审计" class="posttitle">DML审计</a></h3>
-        <p>四张图了解一下DDL，DML，DCL，TCL
-
- 
-PageHelper是怎么实现分页的？
-在了解dml审计之前，我觉得先以我们熟悉的pageHelper...</p>
-    </div>
-</div>
-
-
-<div class="post">
-    <a href="/2018/12/27/hello-world/" title="Hello World-虎虎的博客破壳了">
-        <img src="/img/cover.jpg" class="cover" width="680" height="440">
-    </a>
-    <div class="else">
-        <p>十二月 27, 2018</p>
-        <h3><a href="/2018/12/27/hello-world/" title="Hello World-虎虎的博客破壳了" class="posttitle">Hello World-虎虎的博客破壳了</a></h3>
-        <p>
-It’s wonderful to have you,hexo and diaspora
-
-开篇感谢上面的hexo和diaspora两位主角，让我有决心...</p>
-    </div>
-</div>
-
-
-    </div>
-    
-</div>
-<div id="preview"></div>
 
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({

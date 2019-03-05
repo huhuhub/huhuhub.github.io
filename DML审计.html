@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html lang="" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>有朋自远方来不亦乐乎</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="huhu,"> 
+    
+    <meta name="author" content="Mr.shi"> 
+    <link rel="alternative" href="atom.xml" title="有朋自远方来不亦乐乎" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+</html>
+<body class="loading">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="loader"></div>
+    <div id="single" class="page">
+    <div id="top">
+        <a class="icon-left image-icon" href="javascript:history.back()"></a>
+    </div>
+    <div class="section">
+        <div class="article">
+            <div class="main">
+                <div class="content">
+                    <h3 id="四张图了解一下DDL，DML，DCL，TCL"><a href="#四张图了解一下DDL，DML，DCL，TCL" class="headerlink" title="四张图了解一下DDL，DML，DCL，TCL"></a>四张图了解一下DDL，DML，DCL，TCL</h3><p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0rxxcpj2hj30m0075wep.jpg" alt="DDL"></p>
+<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0rxtwg90vj30g506ndfz.jpg" alt="DML"></p>
+<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0rxywd975j30ec06raa5.jpg" alt="DCL"> <img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0ry1ckdwgj30fa06pjrk.jpg" alt="TCL"></p>
+<h3 id="PageHelper是怎么实现分页的？"><a href="#PageHelper是怎么实现分页的？" class="headerlink" title="PageHelper是怎么实现分页的？"></a>PageHelper是怎么实现分页的？</h3><blockquote>
+<p>在了解dml审计之前，我觉得先以我们熟悉的pageHelper来说，会好理解点。</p>
+</blockquote>
+<h4 id="Start"><a href="#Start" class="headerlink" title="Start"></a>Start</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PageHelper.doPage(page, pageSize, () -&gt; XXXMapper.queryXXX(param1,param2))</span><br></pre></td></tr></table></figure>
+<p>我们经常使用这句来完成数据分页展示，我们首先猜测pageHelper的本质就是在我们的sql后面加个limit page*pageSize,page+pageSize，让我们去证实这个猜测。</p>
+<h4 id="First"><a href="#First" class="headerlink" title="First"></a>First</h4><blockquote>
+<p>注意每段代码上面的是该方法的路径</p>
+</blockquote>
+<p>ctrl + 鼠标右键进入<strong>doPage()</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.PageHelper#doPage</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function">Page&lt;E&gt; <span class="title">doPage</span><span class="params">(<span class="keyword">int</span> page, <span class="keyword">int</span> size, Select select)</span></span>&#123;</span><br><span class="line"> startPage(page,size);</span><br><span class="line"> <span class="keyword">return</span> (Page&lt;E&gt;)select.doSelect();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再进入<strong>startPage()</strong>，一直点到为该线程设置Page属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.page.PageMethod#startPage</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> PageInfo <span class="title">startPage</span><span class="params">(<span class="keyword">int</span> pageNum, <span class="keyword">int</span> pageSize)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> startPage(pageNum, pageSize, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//mybatis.pagehelper.page.PageMethod#startPage</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> PageInfo <span class="title">startPage</span><span class="params">(<span class="keyword">int</span> pageNum, <span class="keyword">int</span> pageSize, <span class="keyword">boolean</span> count)</span> </span>&#123;</span><br><span class="line">        PageInfo page = <span class="keyword">new</span> PageInfo(pageNum, pageSize, count);</span><br><span class="line">        setLocalPage(page);</span><br><span class="line">        <span class="keyword">return</span> page;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//mybatis.pagehelper.page.PageMethod#setLocalPage</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setLocalPage</span><span class="params">(PageInfo info)</span> </span>&#123;</span><br><span class="line">        LOCAL_PAGE.set(info);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//mybatis.pagehelper.page.PageMethod</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;PageInfo&gt; LOCAL_PAGE = <span class="keyword">new</span> ThreadLocal&lt;PageInfo&gt;();</span><br></pre></td></tr></table></figure>
+<p>这段代码大概意思就是用ThreadLocal把前端传来的page和pageSize存下来。点PageInfo类，我们可以看到：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.domain.PageInfo#PageInfo</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PageInfo</span><span class="params">(<span class="keyword">int</span> page, <span class="keyword">int</span> size, <span class="keyword">boolean</span> count)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.page = page;</span><br><span class="line">        <span class="keyword">this</span>.size = size;</span><br><span class="line">        <span class="keyword">this</span>.begin = page * size; <span class="comment">//page</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.end = begin + size;  <span class="comment">//pageSize</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>.count = count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一不小心就看到了上面提到的limit page*pageSize,page+pageSize后面的公式，惊不惊喜？</p>
+<h3 id="Second"><a href="#Second" class="headerlink" title="Second"></a>Second</h3><blockquote>
+<p>既然存到当前线程里，它是不是得取出来然后做点事情，我们去看看。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.page.PageMethod#getLocalPage</span></span><br><span class="line"><span class="comment">//取前端传过来得page和pageSize</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> PageInfo <span class="title">getLocalPage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> LOCAL_PAGE.get();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们的目的也很简单，就是找谁拿这个对象然后取里面的page和pageSize，那下来我们该怎么做？你懂的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.dialect.AbstractHelperDialect#getLocalPage</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> PageInfo <span class="title">getLocalPage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> PageHelper.getLocalPage();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里虽然获取了PageInfo，但它没有做什么，当我们点击的时候，可以看到使用这个方法的都是本类中的。</p>
+<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0s0qwl6obj30wk05h0tb.jpg" alt=""></p>
+<p>看名字会知道它们是做某些操作的，所以我们随便选一个，我这里就点击第一个了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.dialect.AbstractHelperDialect</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">beforeCount</span><span class="params">(MappedStatement ms, Object parameterObject, RowBounds rowBounds)</span> </span>&#123;</span><br><span class="line">        PageInfo info = getLocalPage();</span><br><span class="line">        <span class="keyword">return</span> info.isCount();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从返回值来看，它是判断是否需要查询返回List的size()的（当然，这只是猜测，后面我们会证实的），再点击<strong>beforeCount()</strong>，我们看到了我们的主角（拦截器）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Intercepts</span>(</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="meta">@Signature</span>(type = Executor.class, method = <span class="string">"query"</span>, args = &#123;MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class&#125;),</span><br><span class="line">        <span class="meta">@Signature</span>(type = Executor.class, method = <span class="string">"query"</span>, args = &#123;MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class&#125;),</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageInterceptor</span> <span class="keyword">implements</span> <span class="title">Interceptor</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的<strong>@Intercepts</strong>表明当前这个类为一个拦截器，而<strong>@Signature</strong>则表明要拦截的接口、方法以及对应的参数类型，如果想知道<strong>method</strong>，<strong>args</strong>该怎么写，只需要打开<strong>Executor</strong>这个类，填上参数的<a href="https://www.cnblogs.com/huhu1203/p/7225122.html" target="_blank" rel="noopener">类类型</a>即可。每一个参数都是一个sql执行的必要条件。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line">  &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line">  &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>如果你点进去它的实现类中，你可以看到，参数多的这个 query 方法都是被少的这个 query 方法在内部进行调用的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.ibatis.executor.BaseExecutor#query</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    <span class="comment">//取参数</span></span><br><span class="line"></span><br><span class="line">    BoundSql boundSql = ms.getBoundSql(parameter);</span><br><span class="line">    CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);</span><br><span class="line">    <span class="comment">//此处调用了参数多的query</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> query(ms, parameter, rowBounds, resultHandler, key, boundSql);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    <span class="comment">//......此处省略n行代码</span></span><br><span class="line">    List&lt;E&gt; list;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      queryStack++;</span><br><span class="line">      list = resultHandler == <span class="keyword">null</span> ? (List&lt;E&gt;) localCache.getObject(key) : <span class="keyword">null</span>;</span><br><span class="line">      <span class="keyword">if</span> (list != <span class="keyword">null</span>) &#123;</span><br><span class="line">        handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//返回一个list，是不是我们sql的查询结果呢？</span></span><br><span class="line"></span><br><span class="line">        list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="comment">//......此处省略n行代码</span></span><br><span class="line">    <span class="keyword">return</span> list;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.apache.ibatis.executor.BaseExecutor#query</span></span><br><span class="line"><span class="keyword">private</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">queryFromDatabase</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    List&lt;E&gt; list;</span><br><span class="line">    localCache.putObject(key, EXECUTION_PLACEHOLDER);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">//是不是sql查询结果呢？</span></span><br><span class="line"></span><br><span class="line">      list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      localCache.removeObject(key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//......此处省略n行代码</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">doQuery</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    Statement stmt = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      Configuration configuration = ms.getConfiguration();</span><br><span class="line">      StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);</span><br><span class="line">      stmt = prepareStatement(handler, ms.getStatementLog());</span><br><span class="line">      <span class="keyword">return</span> handler.&lt;E&gt;query(stmt, resultHandler);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      closeStatement(stmt);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>看到了熟悉的<strong>prepareStatement</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">public</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(Statement statement, ResultHandler resultHandler)</span> <span class="keyword">throws</span> SQLException </span>&#123;</span><br><span class="line">    String sql = boundSql.getSql();</span><br><span class="line">    statement.execute(sql);</span><br><span class="line">    <span class="keyword">return</span> resultSetHandler.&lt;E&gt;handleResultSets(statement);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>它execute了sql，说明了什么？解释了pageHelper为什么只拦截Executor中的query方法。而不去拦截Executor中的其他方法。从上面的步骤我们可以知道拦截Executor的任意一个query都可以（参数少的可以通过自己取到参数多的那两个参数），但是为什么pageHelper都要拦截呢？别急，答案在后面。</p>
+<blockquote>
+<p>我们来大概看一看主角是怎么表演的？</p>
+<p>注意逻辑都在<em>intercept</em>方法中，以下代码都在mybatis.pagehelper.PageInterceptor#intercept</p>
+</blockquote>
+<h5 id="a-在改造sql之前，是怎么得到当前sql的？"><a href="#a-在改造sql之前，是怎么得到当前sql的？" class="headerlink" title="a.在改造sql之前，是怎么得到当前sql的？"></a>a.在改造sql之前，是怎么得到当前sql的？</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">intercept</span><span class="params">(Invocation invocation)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Object[] args = invocation.getArgs();</span><br><span class="line">            MappedStatement ms = (MappedStatement) args[<span class="number">0</span>];</span><br><span class="line">            Object parameter = args[<span class="number">1</span>];</span><br><span class="line">            RowBounds rowBounds = (RowBounds) args[<span class="number">2</span>];</span><br><span class="line">            ResultHandler resultHandler = (ResultHandler) args[<span class="number">3</span>];</span><br><span class="line">            Executor executor = (Executor) invocation.getTarget();</span><br><span class="line">            CacheKey cacheKey;</span><br><span class="line">            BoundSql boundSql;</span><br><span class="line">            <span class="comment">//......此处真不知道省略了多少行代码</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>sql的信息全部存储在<strong>invocation</strong>这个对象中，这个过程就是获取信息而已。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(args.length == <span class="number">4</span>)&#123;</span><br><span class="line">                <span class="comment">//4 个参数时</span></span><br><span class="line">                boundSql = ms.getBoundSql(parameter);</span><br><span class="line">                cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//6 个参数时</span></span><br><span class="line">                cacheKey = (CacheKey) args[<span class="number">4</span>];</span><br><span class="line">                boundSql = (BoundSql) args[<span class="number">5</span>];</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<p>这里对上面提到的pageHelper选择两个<strong>query</strong>方法做了处理，==4说明是第一个query，else说明 !=4（感觉自己说了句废话，哈哈哈），最后查阅资料，pageHelper这样设计是为了避免发生多个拦截器加载顺序导致参数被中间那个拦截器修改而让这两个参数不在这里继续生效的情况。他的原话在这里：</p>
+<blockquote>
+<p>如果这个插件配置的靠后，是通过 4 个参数方法进来的，我们就获取这两个对象。如果这个插件配置的靠前，已经被别的拦截器处理成 6 个参数的方法了，那么我们直接从 args 中取出这两个参数直接使用即可。取出这两个参数就保证了当其他拦截器对这两个参数做过处理时，这两个参数在这里会继续生效。</p>
+</blockquote>
+<p>这样boundSql就是当前线程需要执行的sql，大家可以debug看到。</p>
+<h5 id="b-改造sql（这里可要看好了，重点是它要拼sql，emm………-不小心剧透了）"><a href="#b-改造sql（这里可要看好了，重点是它要拼sql，emm………-不小心剧透了）" class="headerlink" title="b.改造sql（这里可要看好了，重点是它要拼sql，emm……….不小心剧透了）"></a>b.改造sql（这里可要看好了，重点是它要拼sql，emm……….不小心剧透了）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//判断是否需要进行分页查询</span></span><br><span class="line"><span class="keyword">if</span> (dialect.beforePage(ms, parameter, rowBounds)) &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">//此处省略代码2行</span></span><br><span class="line">                    String pageSql = dialect.getPageSql(ms, boundSql, parameter, rowBounds, pageKey);</span><br><span class="line">                    BoundSql pageBoundSql = <span class="keyword">new</span> BoundSql(ms.getConfiguration(), pageSql, boundSql.getParameterMappings(), parameter);</span><br><span class="line">                    <span class="comment">//设置动态参数</span></span><br><span class="line">                    <span class="keyword">for</span> (String key : additionalParameters.keySet()) &#123;</span><br><span class="line">                        pageBoundSql.setAdditionalParameter(key, additionalParameters.get(key));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">//执行分页查询</span></span><br><span class="line">                    resultList = executor.query(ms, parameter, RowBounds.DEFAULT, resultHandler, pageKey, pageBoundSql);</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
+<p>我们看看<strong>getPageSql</strong>这个方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getPageSql</span><span class="params">(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey pageKey)</span> </span>&#123;</span><br><span class="line">        String sql = boundSql.getSql();</span><br><span class="line">        PageInfo info = getLocalPage();</span><br><span class="line">        <span class="comment">//重点</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> getPageSql(sql, info, pageKey);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>再点进去<strong>getPageSql</strong>，选择<strong>MySqlDialect</strong>的实现类。</p>
+<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0s91eqh33j311405c3yw.jpg" alt=""></p>
+<p>我们可以看到：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//mybatis.pagehelper.dialect.MySqlDialect#getPageSql</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getPageSql</span><span class="params">(String sql, PageInfo info, CacheKey pageKey)</span> </span>&#123;</span><br><span class="line">        StringBuilder sqlBuilder = <span class="keyword">new</span> StringBuilder(sql.length() + <span class="number">14</span>);</span><br><span class="line">        sqlBuilder.append(sql);</span><br><span class="line">        <span class="keyword">if</span> (info.getBegin() == <span class="number">0</span>) &#123;</span><br><span class="line">            sqlBuilder.append(<span class="string">" LIMIT "</span>);</span><br><span class="line">            sqlBuilder.append(info.getSize());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            sqlBuilder.append(<span class="string">" LIMIT "</span>);</span><br><span class="line">            sqlBuilder.append(info.getBegin());</span><br><span class="line">            sqlBuilder.append(<span class="string">","</span>);</span><br><span class="line">            sqlBuilder.append(info.getSize());</span><br><span class="line">            pageKey.update(info.getBegin());</span><br><span class="line">        &#125;</span><br><span class="line">        pageKey.update(info.getBegin());</span><br><span class="line">        <span class="keyword">return</span> sqlBuilder.toString();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>终于验证了我们最初的猜测，拼接limit。</p>
+<h4 id="第四部呢？"><a href="#第四部呢？" class="headerlink" title="第四部呢？"></a>第四部呢？</h4><h3 id="DML审计流程图"><a href="#DML审计流程图" class="headerlink" title="DML审计流程图"></a>DML审计流程图</h3><p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0ry5zfghsj30h80t8q41.jpg" alt=""></p>
+<h4 id="怎样才能拦截mybatis的dml请求呢？"><a href="#怎样才能拦截mybatis的dml请求呢？" class="headerlink" title="怎样才能拦截mybatis的dml请求呢？"></a>怎样才能拦截mybatis的dml请求呢？</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Intercepts</span>(&#123;<span class="meta">@Signature</span>(type = Executor.class, method = <span class="string">"update"</span>, args = &#123;MappedStatement.class, Object.class&#125;)&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DmlLogInterceptor</span> <span class="keyword">implements</span> <span class="title">Interceptor</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的<strong>@Intercepts</strong>表明当前这个类为一个拦截器，而<strong>@Signature</strong>则表明要拦截的接口、方法以及对应的参数类型</p>
+</blockquote>
+<p>我们可以看看Executor的这个类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">update</span><span class="params">(MappedStatement ms, Object parameter)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">query</span><span class="params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
