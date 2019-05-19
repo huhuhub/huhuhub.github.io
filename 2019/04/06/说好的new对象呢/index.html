@@ -55,7 +55,7 @@
 <p>原以为事情就这么结束了，运行，我的天，new 出来的东西怎么是这个：</p>
 <pre class=" language-lang-java"><code class="language-lang-java">Unable to evaluate the expression Method threw 'java.lang.NullPointerException' exception.
 </code></pre>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g1sr53uiazj30yu01u0so.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpggy1g1sr53uiazj30yu01u0so.jpg" alt=""></p>
 <p>我们看了看Page和ArrayList的构造函数，看看它们在实例化的时候做了什么：</p>
 <pre class=" language-lang-java"><code class="language-lang-java">public Page(){
 }
@@ -205,7 +205,7 @@ private static final int DEFAULT_CAPACITY = 10;
 }
 </string></code></pre>
 <p>运行结果：</p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g1sveu1hkvj30kr057dfz.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpggy1g1sveu1hkvj30kr057dfz.jpg" alt=""></p>
 <p>看堆栈是调用了list的toString()方法，我们去看看：</p>
 <pre class=" language-lang-java"><code class="language-lang-java">public String toString() {
         Iterator<e> it = iterator();
@@ -240,7 +240,7 @@ private static final int DEFAULT_CAPACITY = 10;
 <p>Settings-&gt;Build,Execution,Deployment-&gt;Debugger-&gt;Data views -&gt;java-&gt;Enable ‘toString()’ Object View 选项。</p>
 </blockquote>
 <p>打开上面的路径就可以看到，这个功能我觉得还是开着会比较好，以后遇到了这个错误，就知道是对象中的toString()方法出现问题。</p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpggy1g1sxdmrljdj31hc0u0k7f.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpggy1g1sxdmrljdj31hc0u0k7f.jpg" alt=""></p>
 <blockquote>
 <p>&emsp;&emsp;上海这几天天气晴朗，风吹的很轻，不似内蒙风的冷峻，不似武汉风的刺骨。今早早早起来，看到喜欢的女孩给我回了消息，心里甚是喜悦，于是写了上面的文字。虽潦草，但也好过无所事事。<br>&emsp;&emsp;又是一年清明时，我想到了我的奶奶，奶奶已经走了10几年了，但昨日的音容，难免让人思念，我记得小时候我们家养了3只公鸡，那三只公鸡每次我放学都来啄我，奶奶拄着拐杖，迈着自己的小脚，很利索的来帮我解围，小时候什么都不懂，大了什么都懂但是。。。此时的我眼泪哗哗的掉。<br>&emsp;&emsp;想订张机票直接回家，上海却没有今天直接去我们那的飞机，等5.1回家，为奶奶烧一炷香，除掉坟前的杂草。<br>&emsp;&emsp;一些心绪，借文述愁。</p>
 </blockquote>

@@ -36,9 +36,9 @@
 
         </div>
         <div class="content markdown">
-            <h2 id="四张图了解一下DDL，DML，DCL，TCL"><a href="#四张图了解一下DDL，DML，DCL，TCL" class="headerlink" title="四张图了解一下DDL，DML，DCL，TCL"></a>四张图了解一下DDL，DML，DCL，TCL</h2><p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0rxxcpj2hj30m0075wep.jpg" alt="DDL"></p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0rxtwg90vj30g506ndfz.jpg" alt="DML"></p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0rxywd975j30ec06raa5.jpg" alt="DCL"> <img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0ry1ckdwgj30fa06pjrk.jpg" alt="TCL"></p>
+            <h2 id="四张图了解一下DDL，DML，DCL，TCL"><a href="#四张图了解一下DDL，DML，DCL，TCL" class="headerlink" title="四张图了解一下DDL，DML，DCL，TCL"></a>四张图了解一下DDL，DML，DCL，TCL</h2><p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0rxxcpj2hj30m0075wep.jpg" alt="DDL"></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0rxtwg90vj30g506ndfz.jpg" alt="DML"></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0rxywd975j30ec06raa5.jpg" alt="DCL"> <img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0ry1ckdwgj30fa06pjrk.jpg" alt="TCL"></p>
 <h2 id="PageHelper是怎么实现分页的？"><a href="#PageHelper是怎么实现分页的？" class="headerlink" title="PageHelper是怎么实现分页的？"></a>PageHelper是怎么实现分页的？</h2><blockquote>
 <p>在了解dml审计之前，我觉得先以我们熟悉的pageHelper来说，会好理解点。</p>
 </blockquote>
@@ -102,7 +102,7 @@ public PageInfo getLocalPage() {
 }
 </code></pre>
 <p>这里虽然获取了PageInfo，但它没有做什么，当我们点击的时候，可以看到使用这个方法的都是本类中的。</p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0s0qwl6obj30wk05h0tb.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0s0qwl6obj30wk05h0tb.jpg" alt=""></p>
 <p><span id="jump3">看名字会知道它们是做某些操作的，所以我们随便选一个，我这里就点击第一个了。</span></p>
 <pre class=" language-lang-java"><code class="language-lang-java">//mybatis.pagehelper.dialect.AbstractHelperDialect
 public boolean beforeCount(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
@@ -247,7 +247,7 @@ if (dialect.beforePage(ms, parameter, rowBounds)) {
     }
 </code></pre>
 <p>再点进去<strong>getPageSql</strong>，选择<strong>MySqlDialect</strong>的实现类。</p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0s91eqh33j311405c3yw.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0s91eqh33j311405c3yw.jpg" alt=""></p>
 <p>我们可以看到：</p>
 <pre class=" language-lang-java"><code class="language-lang-java">//mybatis.pagehelper.dialect.MySqlDialect#getPageSql
 public String getPageSql(String sql, PageInfo info, CacheKey pageKey) {
@@ -346,7 +346,7 @@ public static PageInfo startPage(int pageNum, int pageSize, boolean count) {
 </code></pre>
 <p>这里默认count为true，这是为什么在拦截器中使用<strong><a href="#jump3">beforeCount</a></strong>来判断是否需要拿到所查记录的所有条数，反过来说，你见过使用pageHelper查出来的记录没有总条数吗？</p>
 <p>到这里，pageHelper就看完了，到文章最后我再给你总结一下。</p>
-<h2 id="DML审计"><a href="#DML审计" class="headerlink" title="DML审计"></a>DML审计</h2><h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0t56rgolqj30es0vzgmq.jpg" alt=""></p>
+<h2 id="DML审计"><a href="#DML审计" class="headerlink" title="DML审计"></a>DML审计</h2><h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0t56rgolqj30es0vzgmq.jpg" alt=""></p>
 <h3 id="a-怎样才能拦截mybatis的dml请求呢？"><a href="#a-怎样才能拦截mybatis的dml请求呢？" class="headerlink" title="a.怎样才能拦截mybatis的dml请求呢？"></a>a.怎样才能拦截mybatis的dml请求呢？</h3><pre class=" language-lang-java"><code class="language-lang-java">@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class DmlLogInterceptor implements Interceptor {
 }
@@ -354,9 +354,9 @@ public class DmlLogInterceptor implements Interceptor {
 <p>类比一下上面的pageHelper，它其实就是拦截Executor的update方法。我们不妨看看Executo类中的update到底做了什么？我们点到实现update方法的子类中：</p>
 <blockquote>
 <p>其实这里当你不知道选择那个子类的时候，我建议你根据命名来判断，我常看的有这两种（BaseXXX或者SimpleXXX），你看下面这个BaseExecutor，一看第一个就是通用的，所以我们就选它了。</p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0swjtnznpj310l055aag.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0swjtnznpj310l055aag.jpg" alt=""></p>
 <p>这个也是类似的。那个简单看那个，麻雀虽小，五脏俱全嘛。</p>
-<p><img src="https://ws3.sinaimg.cn/large/005BYqpgly1g0swpqt4y9j30zf05x3z0.jpg" alt=""></p>
+<p><img src="https://cdn.sinaimg.cn.52ecy.cn/large/005BYqpgly1g0swpqt4y9j30zf05x3z0.jpg" alt=""></p>
 </blockquote>
 <p>一路点下去我们到了这里：</p>
 <pre class=" language-lang-java"><code class="language-lang-java">//org.apache.ibatis.executor.statement.SimpleStatementHandler#update
